@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CSV Server Architecture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1060, 540]
+  },
+  "components": [
+    { "id": "api-client", "type": "external", "label": "API client", "sublabel": "CSV upload / GET", "pos": [55, 255], "size": [155, 76] },
+    { "id": "flask-routes", "type": "backend", "label": "Flask routes", "sublabel": "API + auth check", "pos": [285, 255], "size": [155, 76] },
+    { "id": "upload-service", "type": "backend", "label": "Upload service", "sublabel": "validate + save", "pos": [540, 175], "size": [155, 76] },
+    { "id": "file-storage", "type": "external", "label": "File storage", "sublabel": "uploads / Raw_Files", "pos": [790, 175], "size": [155, 76] },
+    { "id": "repositories", "type": "backend", "label": "Repositories", "sublabel": "ODI + reports", "pos": [540, 400], "size": [155, 76] },
+    { "id": "oracle-db", "type": "database", "label": "Oracle", "sublabel": "job_stats + customer", "pos": [790, 400], "size": [155, 76] },
+    { "id": "upload-token", "type": "security", "label": "Upload token", "sublabel": "Bearer header", "pos": [285, 45], "size": [155, 76] }
+  ],
+  "connections": [
+    { "id": "http-request", "from": "api-client", "to": "flask-routes", "label": "HTTP request" },
+    { "id": "authorize", "from": "upload-token", "to": "flask-routes", "label": "verify token", "variant": "security", "labelDy": 24 },
+    { "id": "upload-route", "from": "flask-routes", "to": "upload-service", "label": "POST /upload" },
+    { "id": "save-file", "from": "upload-service", "to": "file-storage", "label": "save CSV/TXT" },
+    { "id": "report-routes", "from": "flask-routes", "to": "repositories", "label": "GET reports" },
+    { "id": "reserve-job", "from": "upload-service", "to": "repositories", "label": "reserve job ID", "labelDy": 24 },
+    { "id": "database-queries", "from": "repositories", "to": "oracle-db", "label": "SQL" }
+  ]
+}

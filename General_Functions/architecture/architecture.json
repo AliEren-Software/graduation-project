@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "General Functions Architecture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1120, 570]
+  },
+  "components": [
+    { "id": "raw-folders", "type": "external", "label": "ODI folders", "sublabel": "Raw_Files / Insert_Out", "pos": [55, 245], "size": [160, 76] },
+    { "id": "watchdog", "type": "backend", "label": "Watchdog", "sublabel": "filesystem observers", "pos": [275, 245], "size": [155, 76] },
+    { "id": "event-handlers", "type": "backend", "label": "Event handlers", "sublabel": "main + cloud", "pos": [490, 245], "size": [155, 76] },
+    { "id": "script-runner", "type": "backend", "label": "ScriptRunner", "sublabel": "queue + deduplication", "pos": [705, 245], "size": [155, 76] },
+    { "id": "external-scripts", "type": "external", "label": "ODI scripts", "sublabel": "processor + cloud", "pos": [920, 245], "size": [155, 76] },
+    { "id": "oracle", "type": "database", "label": "Oracle", "sublabel": "ODI + job_stats", "pos": [490, 50], "size": [155, 76] },
+    { "id": "monitor-ui", "type": "frontend", "label": "Tkinter UI", "sublabel": "logs + shutdown", "pos": [275, 430], "size": [155, 76] }
+  ],
+  "connections": [
+    { "id": "folder-events", "from": "raw-folders", "to": "watchdog", "label": "file events" },
+    { "id": "dispatch-events", "from": "watchdog", "to": "event-handlers" },
+    { "id": "enqueue-scripts", "from": "event-handlers", "to": "script-runner", "label": "enqueue" },
+    { "id": "run-script", "from": "script-runner", "to": "external-scripts", "label": "Python process", "labelDy": 62 },
+    { "id": "update-odi", "from": "event-handlers", "to": "oracle", "label": "ODI status" },
+    { "id": "control-observers", "from": "monitor-ui", "to": "watchdog", "label": "start / stop" }
+  ]
+}
